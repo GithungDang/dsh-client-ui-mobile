@@ -242,6 +242,28 @@
     opacity: 1 !important;
   }
 
+  /* Give each tool entry a subtle card surface so rows scan as distinct
+     units. Per-type hues need design tokens; this uses the neutral hover tint. */
+  :global([class$="_callRow"] [data-tool]) {
+    border-radius: 8px;
+    background: var(--dsw-alias-interactive-bg-hover);
+  }
+
+  /* Long paths (e.g. /home/githungdang/...) must not eat the horizontal space
+     the action name needs: cap the width and show the tail (the filename)
+     with an ellipsis via rtl flow. The full path stays available in the
+     expanded details. */
+  :global([class$="_callRow"] [class*="_fileLink"]) {
+    display: inline-block;
+    max-width: 55%;
+    direction: rtl;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+  }
+
   /* Enlarge the touch target of controls that are too small on phones without
      changing their visual layout box. The pseudo-element expands the
      clickable/hittable area around the original control. */
@@ -321,6 +343,12 @@
     align-items: center;
   }
 
+  /* Collapse the mode label to its icon on phones (the tooltip still works);
+     the text eats width the session title needs. */
+  :global([data-phase] header [class*="_headerActions"] [class*="_label"]) {
+    font-size: 0;
+  }
+
   /* Compact the session-log utility button to an icon-only control: the
      built-in style pins a 111px min-width and a long English label. */
   :global([data-phase] header [class$="_sessionLogButton"]) {
@@ -360,31 +388,53 @@
 
   /* ── composer / bottom area ──
      The composer card is already widened via --dsh-composer-side-clearance.
-     Here: bottom safe-area padding, and a taller input with a >=16px font so
-     iOS does not zoom the page on focus. */
+     Bottom safe-area padding only: the built-in textarea/mirror pair owns its
+     own height math (a forced min-height or font-size here broke the hidden
+     mirror and showed a scrollbar on an empty input). */
   :global([data-composer-seat]) {
     padding-bottom: max(4px, env(safe-area-inset-bottom));
   }
 
-  :global([data-composer-seat] textarea) {
-    min-height: 40px !important;
-    font-size: 16px !important;
+  /* Input toolbar row on phones: let the trailing model/stats wrap under the
+     tools instead of squeezing, smaller text, and hide the permission/plan
+     modes cluster — keep just the "+" commands button. */
+  :global([data-composer-card] [class*="_row"]) {
+    flex-wrap: wrap;
+    font-size: 12px;
+    row-gap: 2px;
   }
 
-  /* ── queue dock (排队面板): keep the built-in 180px list cap; on phones
-     the single-line preview truncates the queued message, so let it wrap and
-     let rows grow — the built-in list scrolls the overflow. */
+  :global([data-composer-card] [class*="_row"] [class*="_modes"]) {
+    display: none;
+  }
+
+  /* ── queue dock (排队面板) ────────────────────────────────────────────────
+     The built-in dock tucks 3px under the input card (negative margin); with
+     wrapped preview rows that reads as overlap on phones, so let it sit on the
+     stack gap instead. Rows wrap: the message preview gets the full first
+     line, the three action buttons move to their own right-aligned line. */
+  :global([data-queue-dock]) {
+    margin-bottom: 0;
+  }
+
+  :global([data-queue-dock] [class*="_row"]) {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    row-gap: 4px;
+  }
+
   :global([data-queue-dock] [class*="_preview"]) {
+    flex: 1 1 100%;
     white-space: normal;
     overflow: visible;
     text-overflow: clip;
     line-height: 18px;
   }
 
-  :global([data-queue-dock] [class*="_row"]) {
-    height: auto;
-    min-height: 36px;
-    padding: 8px 5px 8px 12px;
+  :global([data-queue-dock] [class*="_actions"]) {
+    flex: 1 1 100%;
+    justify-content: flex-end;
+    gap: 6px;
   }
 
   /* ── markdown tables: never overflow the phone viewport horizontally ── */
