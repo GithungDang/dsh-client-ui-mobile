@@ -64,7 +64,13 @@ const clientConfig: UserConfig = {
   dts: false,
   sourcemap: true,
   clean: false,
-  external: EXTERNALS,
+  // The rule is the module table itself: externals stay external (neverBundle),
+  // everything else inlines (alwaysBundle). A require() the table cannot answer
+  // is a runtime throw.
+  deps: {
+    neverBundle: EXTERNALS,
+    alwaysBundle: (id: string) => (EXTERNALS.includes(id) ? undefined : true),
+  },
   // Inline node-idiom deps (zustand/immer) read process.env.NODE_ENV /
   // import.meta.env.MODE; define both so the inlined copies keep the right
   // branch. The bare `import.meta.env` key covers truthiness probes.
@@ -73,9 +79,6 @@ const clientConfig: UserConfig = {
     'import.meta.env.MODE': JSON.stringify(process.env.NODE_ENV ?? 'production'),
     'import.meta.env': JSON.stringify({ MODE: process.env.NODE_ENV ?? 'production' }),
   },
-  // The rule is the module table itself: externals stay external, everything
-  // else inlines. A require() the table cannot answer is a runtime throw.
-  noExternal: (id: string) => (EXTERNALS.includes(id) ? undefined : true),
   plugins: [
     {
       name: 'dsh-css-modules-inline',
