@@ -164,11 +164,6 @@
     padding-right: 0 !important;
   }
 
-  /* Reduce the composer side clearance on phones. */
-  :global([class$="_centerCol"] [class$="_root"]) {
-    --dsh-composer-side-clearance: 12px;
-  }
-
   /* When a built-in modal/dialog is open, drop the floating layer below the
      drawer's stacking context so modal controls (e.g. the settings close
      button) are not blocked by the mobile nav backdrop. The parent overlay
@@ -570,25 +565,5 @@
     text-overflow: ellipsis !important;
     white-space: nowrap;
     vertical-align: middle;
-  }
-}
-
-/* Question composer takeover (QuestionComposer): the built-in card trusts
-   .options to scroll, but on a narrow viewport a tall title + option list can
-   overflow the card and paint option content over the title / next row. Force
-   the option list to own its overflow and never shrink a row. */
-@media (max-width: 768px) {
-  :global([data-composer-seat] [class$="_card"]) {
-    max-height: 60vh;
-  }
-  :global([data-composer-seat] [class$="_options"]) {
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    min-height: 0;
-    flex-shrink: 0;
-  }
-  :global([data-composer-seat] [class$="_option"]) {
-    flex-shrink: 0;
-    overflow: hidden;
   }
 }
