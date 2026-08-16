@@ -16,12 +16,12 @@
 .toggle {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
-  /* Borderless icon button: the user wants the drawer glyph to sit quietly
-     in the header, not framed. The 44px box stays for the touch target. */
+  width: 40px;
+  height: 40px;
+  /* Borderless icon button: the drawer glyph sits quietly in the header.
+     The touch target extends via the module's ::after hit area. */
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   background: transparent;
   color: var(--dsw-alias-label-primary);
   cursor: pointer;
@@ -315,12 +315,12 @@
      The header must keep enough height for the absolute-positioned subtitle
      so it does not float over the message content below. */
   :global([data-phase] header) {
-    min-height: 64px;
+    min-height: 58px;
   }
 
   :global([data-phase] header [class*="_titleRow"]) {
     position: relative;
-    height: 34px;
+    height: 30px;
   }
 
   :global([data-phase] header [class*="_crumbs"]) {
@@ -333,8 +333,8 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     text-align: center;
-    font-size: 18px;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 700;
   }
 
   :global([data-phase] header [class*="_titleCluster"]) {
@@ -347,7 +347,7 @@
   :global([data-phase] header [class*="_headerActions"]) {
     display: flex;
     position: absolute;
-    top: 34px;
+    top: 31px;
     left: 50%;
     transform: translateX(-50%);
     align-items: center;
@@ -359,7 +359,7 @@
     align-items: center;
     gap: 3px;
     font-size: 12px;
-    color: var(--dsw-alias-label-caption);
+    color: var(--dsw-alias-label-tertiary);
   }
 
   :global([data-phase] header [class*="_headerActions"] [class*="_label"] svg) {
