@@ -1,0 +1,9 @@
+# Load dsh-client-ui-mobile into a dsh web composition.
+#
+# As a bundle (`dsh.bundle` in package.json), `dsh plugin add` applies this
+# layer automatically. You can also apply it by hand as an overlay:
+#
+#   dsh web --patch ./cordis.patch.yml
+- insert:
+    - id: ui-mobile
+      name: dsh-client-ui-mobile

@@ -1,0 +1,274 @@
+/* Local floating-control styles. */
+.layer {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  left: 12px;
+  z-index: 210;
+  pointer-events: none;
+}
+
+.layer > * {
+  pointer-events: auto;
+}
+
+.toggle {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 999px;
+  background: var(--dsw-alias-button-floating-fill);
+  color: var(--dsw-alias-label-primary);
+  box-shadow: var(--dsw-shadow-lv2);
+  cursor: pointer;
+}
+
+.toggle:hover {
+  background: var(--dsw-alias-button-floating-hover);
+}
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  /* Cover only the area outside the drawer so sidebar contents remain
+     clickable. Must match the drawer width in the global mobile rules. */
+  left: min(82vw, 320px);
+  border: none;
+  background: rgb(0 0 0 / 35%);
+  cursor: pointer;
+}
+
+/* Hide the floating control on desktop. */
+@media (min-width: 769px) {
+  .layer {
+    display: none;
+  }
+}
+
+/* ── global mobile layout overrides ─────────────────────────────────────────
+   These intentionally target the built-in CSS-module class suffixes. The
+   suffix pattern (`[hash]_[local]`) is stable across builds; the full hash is
+   not. Only narrow screens are affected; desktop keeps the shipped layout. */
+@media (max-width: 768px) {
+  /* The desktop three-column frame becomes a single full-width column. */
+  :global([class$="_frame"]) {
+    /* The inline style already animates between desktop track widths; forcing
+       a different track set through !important must not run that transition
+       (it leaves the center column stuck at a zero used width in Chromium). */
+    transition: none !important;
+    grid-template-columns: 0px minmax(0, 1fr) 0px !important;
+  }
+
+  /* Hide the rail by default. Because a display:none grid item no longer
+     participates in auto-placement, the center column must be pinned to the
+     second track explicitly; otherwise it lands in the 0px first track. */
+  :global([class$="_sidebarCol"]) {
+    display: none;
+  }
+
+  /* The built-in overlay layer normally sits below the sidebar's drawer
+     z-index. On mobile the floating nav toggle lives there, so lift the whole
+     overlay layer above the drawer. */
+  :global([class$="_overlayLayer"]) {
+    z-index: 200 !important;
+  }
+
+  :global([class$="_centerCol"]) {
+    grid-column: 2;
+  }
+
+  /* When the user opens the built-in narrow expansion, render it as a fixed
+     drawer over the conversation instead of squeezing the center column. */
+  :global(html[data-mobile-nav="open"] [class$="_sidebarCol"]) {
+    display: block;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 110;
+    width: min(82vw, 320px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--dsw-specific-sidebar-fill);
+    border-right: 1px solid var(--dsw-alias-border-l1);
+    box-shadow: var(--dsw-shadow-lv2);
+  }
+
+  /* The sidebar's main list region keeps the desktop overflow:hidden rule by
+     default; on the mobile drawer let it scroll so long session/file lists are
+     not clipped. */
+  :global(html[data-mobile-nav="open"] [class$="_sidebarCol"] [class$="_regionArea"]) {
+    overflow-y: auto;
+    min-height: 0;
+    overscroll-behavior: contain;
+  }
+
+  /* Keep the details column out of the way on phones (it is already
+     auto-closed by the built-in solver; this is a belt-and-braces guard). */
+  :global([class$="_detailsCol"]) {
+    display: none;
+  }
+
+  /* Give the conversation more usable width. */
+  :global([class$="_centerCol"] [class$="_scroll"]) {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* Reduce the composer side clearance on phones. */
+  :global([class$="_centerCol"] [class$="_root"]) {
+    --dsh-composer-side-clearance: 12px;
+  }
+
+  /* When a built-in modal/dialog is open, drop the floating layer below the
+     drawer's stacking context so modal controls (e.g. the settings close
+     button) are not blocked by the mobile nav backdrop. The parent overlay
+     layer must drop too, otherwise its z-index:200 stacking context still
+     sits above the dialog. */
+  body:has([role="dialog"]) .layer,
+  body:has([role="dialog"]) :global([class$="_overlayLayer"]) {
+    z-index: 90 !important;
+  }
+
+  /* ── settings modal mobile adaptation ─────────────────────────────────────
+     The built-in settings panel is a desktop two-column 800px dialog. On
+     phones turn it into a full-screen stacked layout: nav becomes a compact
+     horizontal tab strip and the content column gets the full width. */
+  :global([class$="_overlay"]) {
+    align-items: stretch !important;
+    justify-content: stretch !important;
+    padding: 0 !important;
+  }
+
+  :global([class$="_panel"]) {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    flex-direction: column !important;
+  }
+
+  :global([class$="_nav"]) {
+    flex: none !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    padding: max(8px, env(safe-area-inset-top)) 12px 8px !important;
+    overflow-x: auto !important;
+    border-bottom: 1px solid var(--dsw-alias-border-l1) !important;
+  }
+
+  :global([class$="_navTitle"]) {
+    flex: none !important;
+    padding: 0 8px !important;
+  }
+
+  :global([class$="_navList"]) {
+    flex-direction: row !important;
+    gap: 4px !important;
+  }
+
+  :global([class$="_navCell"]) {
+    flex: none !important;
+    height: 36px !important;
+    padding: 0 12px !important;
+  }
+
+  :global([class$="_content"]) {
+    flex: 1 !important;
+    width: 100% !important;
+    min-height: 0 !important;
+  }
+
+  :global([class$="_header"]) {
+    height: auto !important;
+    min-height: 48px !important;
+    padding: max(8px, env(safe-area-inset-top)) 12px 4px !important;
+  }
+
+  :global([class$="_options"]) {
+    padding: 0 16px max(16px, env(safe-area-inset-bottom)) !important;
+  }
+
+  /* ── tool-call rows mobile adaptation ─────────────────────────────────────
+     The desktop tool rows are compact 24px single-line summaries. On phones
+     give them more height, let the summary wrap, and make Inspect reachable
+     without hover. */
+  :global([class$="_callRow"] [class$="_root"]),
+  :global([class$="_callRow"] [class$="_row"]) {
+    height: auto !important;
+    min-height: 40px !important;
+    padding: 8px 10px !important;
+    box-sizing: border-box !important;
+  }
+
+  :global([class$="_callRow"] [class$="_summary"]) {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    line-height: 20px !important;
+  }
+
+  :global([class$="_callRow"] [class$="_ioSection"]) {
+    grid-template-columns: 1fr !important;
+    row-gap: 4px !important;
+    padding: 10px 12px !important;
+    max-height: 200px !important;
+  }
+
+  :global([class$="_callRow"] [class$="_ioLabel"]) {
+    position: static !important;
+  }
+
+  :global([class$="_callRow"] [class$="_inspectButton"]) {
+    opacity: 1 !important;
+  }
+
+  /* Enlarge the touch target of controls that are too small on phones without
+     changing their visual layout box. The pseudo-element expands the
+     clickable/hittable area around the original control. */
+  :global(button[class$="_primary"]),
+  :global(button[class$="_add"]),
+  :global(button[class$="_iconButton"]),
+  :global(button[class$="_newSession"]),
+  :global(button[class$="_trigger"]),
+  :global(button[class$="_chip"]),
+  :global(button[class$="_entry"]),
+  :global(button[class$="_workspace"]),
+  :global(button[class$="_seat"]),
+  :global(button[class$="_brand"]),
+  :global(button[class$="_searchButton"]),
+  :global(button[class$="_sessionOverflowButton"]) {
+    position: relative;
+    /* Some built-in buttons clip with overflow:hidden, which would also clip
+       the expanded ::after hit area. Let the hit-area pseudo extend past the
+       visual box on mobile. */
+    overflow: visible !important;
+  }
+
+  :global(button[class$="_primary"]::after),
+  :global(button[class$="_add"]::after),
+  :global(button[class$="_iconButton"]::after),
+  :global(button[class$="_newSession"]::after),
+  :global(button[class$="_trigger"]::after),
+  :global(button[class$="_chip"]::after),
+  :global(button[class$="_entry"]::after),
+  :global(button[class$="_workspace"]::after),
+  :global(button[class$="_seat"]::after),
+  :global(button[class$="_brand"]::after),
+  :global(button[class$="_searchButton"]::after),
+  :global(button[class$="_sessionOverflowButton"]::after) {
+    content: '';
+    display: block;
+    position: absolute;
+    inset: -8px;
+    border-radius: inherit;
+    pointer-events: auto;
+  }
+}

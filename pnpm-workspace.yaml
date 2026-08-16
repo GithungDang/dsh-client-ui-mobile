@@ -1,0 +1,7 @@
+# This repository is its own pnpm workspace. The local file also keeps the
+# three native transitive devDependencies from running install scripts — the
+# plugin never imports them, they exist only in the typecheck dependency tree.
+allowBuilds:
+  onnxruntime-node: false
+  protobufjs: false
+  sharp: false
