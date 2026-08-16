@@ -354,7 +354,7 @@
      Force a compact height: the built-in two-row header plus leftover tabs
      spacing adds up to ~71px; on phones we only need room for the title row
      and the absolute mode subtitle below it. */
-  :global([data-phase] header) {
+  :global([data-slot="conversation.session.header"] > header) {
     /* content-box by default: an explicit height then excludes padding, so
        border-box keeps the total exact. 64px = 10px pad + 32px title row +
        22px mode subtitle. */
@@ -364,12 +364,12 @@
     padding-top: 6px;
   }
 
-  :global([data-phase] header [class*="_titleRow"]) {
+  :global([data-slot="conversation.session.header"] > header [class*="_titleRow"]) {
     position: relative;
     height: 26px !important;
   }
 
-  :global([data-phase] header [class*="_crumbs"]) {
+  :global([data-slot="conversation.session.header"] > header [class*="_crumbs"]) {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -383,20 +383,20 @@
 
   /* The title text lives in the crumb BUTTONS; the built-in .crumb sets its
      own 14px/500, so the container rule alone never enlarged it. */
-  :global([data-phase] header [class*="_crumbs"] [class*="_crumb"]) {
+  :global([data-slot="conversation.session.header"] > header [class*="_crumbs"] [class*="_crumb"]) {
     font-size: 16px !important;
     font-weight: 600 !important;
     line-height: 26px;
   }
 
-  :global([data-phase] header [class*="_titleCluster"]) {
+  :global([data-slot="conversation.session.header"] > header [class*="_titleCluster"]) {
     flex: 1;
     min-width: 0;
   }
 
   /* The mode label (创造模式 / 极简模式) becomes a small light subtitle under
      the title, centered. */
-  :global([data-phase] header [class*="_headerActions"]) {
+  :global([data-slot="conversation.session.header"] > header [class*="_headerActions"]) {
     display: flex;
     position: absolute;
     top: 26px;
@@ -406,7 +406,7 @@
     justify-content: center;
   }
 
-  :global([data-phase] header [class*="_headerActions"] [class*="_label"]) {
+  :global([data-slot="conversation.session.header"] > header [class*="_headerActions"] [class*="_label"]) {
     display: inline-flex;
     align-items: center;
     gap: 3px;
@@ -414,22 +414,34 @@
     color: var(--dsw-alias-label-tertiary);
   }
 
-  :global([data-phase] header [class*="_headerActions"] [class*="_label"] svg) {
+  :global([data-slot="conversation.session.header"] > header [class*="_headerActions"] [class*="_label"] svg) {
     width: 12px;
     height: 12px;
   }
 
   /* The session-log utility is hidden on phones: the drawer toggle takes the
      top-right corner. */
-  :global([data-phase] header [class*="_headerUtilities"]) {
+  :global([data-slot="conversation.session.header"] > header [class*="_headerUtilities"]) {
     display: none;
   }
 
   /* The view tabs (对话/轨迹) are hidden on phones; their functions move into
      the top-right "+" menu (the menu clicks the hidden built-in controls, so
      the switching logic stays in the shell). */
-  :global([data-phase] header [class*="_tabs"]) {
+  :global([data-slot="conversation.session.header"] > header [class*="_tabs"]) {
     display: none;
+  }
+
+  /* Question popup, long-title safety: with the session-header rule above now
+     scoped, the popup's own header keeps its natural flex sizing. Cap only the
+     title block so a very long question scrolls inside the title area instead
+     of consuming the whole card height; the option list stays visible in the
+     card body's own scroll region. */
+  :global([data-question-key] [class$="_title"]) {
+    max-height: 26vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    overflow-wrap: anywhere;
   }
 
   /* ── composer / bottom area ──
@@ -544,47 +556,3 @@
   }
 }
 
-@media (max-width: 768px) {
-}
-
-/* Question popup, long-title safety: with a very long title the built-in card
-   can flex-shrink its header so the option list runs up into the title text.
-   Anchor on the popup's stable data-question-key: keep the header at natural
-   height, give the body its own scroll region, so title and options never
-   overlap regardless of title length. */
-@media (max-width: 768px) {
-  /* With an extremely long title, the built-in 60vh card cap hides the option
-     list (title eats all the space). Make the whole card + its body one scroll
-     region so title AND options stay reachable; nothing overlaps or hides. */
-  :global([data-question-key] [class$="_card"]) {
-    display: block !important;
-    max-height: min(60vh, 520px) !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-  }
-  :global([data-question-key] [class$="_header"]) {
-    flex: none !important;
-  }
-  :global([data-question-key] [class$="_body"]) {
-    overflow: visible !important;
-  }
-}
-
-/* Question popup long-title safety: on very narrow phones a long title wraps
-   into many lines that push the option list up under/over the title text.
-   Cap the title block and let it scroll internally, so no matter how long the
-   title is, the options below stay visible and never overlap it. */
-@media (max-width: 768px) {
-  :global([data-question-key] [class$="_title"]),
-  :global([data-question-key] .title) {
-    max-height: 26vh !important;
-    overflow-y: auto !important;
-    overscroll-behavior: contain !important;
-  }
-  :global([data-question-key] [class$="_body"]),
-  :global([data-question-key] [class$="_options"]) {
-    flex: 1 1 auto !important;
-    max-height: none !important;
-    overflow: visible !important;
-  }
-}
