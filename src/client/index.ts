@@ -117,6 +117,33 @@ export function apply(ctx: ClientContext): void {
     return () => mql.removeEventListener('change', onChange)
   }, 'ui-mobile: mobile breakpoint sync')
 
+  // Keep only the count + duration on the composer stats line: the built-in
+  // StatsLine pipes 轮·步 | LLM .. | 首 token 平均.. | ..tok/s | 缓存命中 | 输入/输出 tok
+  // into one row (locale 'stats.*'). On a narrow screen the tail overflows
+  // past the right edge. Strip every group span whose text is a ttft/tps/cache
+  // /token group (by their known prefixes) so only counts and durations remain.
+  ctx.effect(() => {
+    const DROP = /首\s*token|tok\/s|缓存命中|输入|输出|\btps\b|\btokens?\b/i
+    const clean: () => void = () => {
+      for (const root of document.querySelectorAll('[data-composer-seat] [class*="_root"]')) {
+        const spans = [...root.querySelectorAll(':scope > span')]
+        for (const span of spans) {
+          if (!DROP.test(span.textContent ?? '')) continue
+          // Remove the preceding separator (the bare '|' span with aria-hidden).
+          const prev = span.previousElementSibling
+          if (prev instanceof HTMLElement && prev.getAttribute('aria-hidden') !== null) {
+            prev.remove()
+          }
+          span.remove()
+        }
+      }
+    }
+    const observer = new MutationObserver(clean)
+    observer.observe(document.body, { childList: true, subtree: true })
+    clean()
+    return () => observer.disconnect()
+  }, 'ui-mobile: condense composer stats line')
+
   // Disabled pending a reported regression: the global body MutationObserver
   // (childList+subtree → prune() with getBoundingClientRect on every DOM
   // change) is the prime suspect for the "composer disappears after scrolling

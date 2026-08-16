@@ -518,14 +518,8 @@
   }
 
 
-  :global([data-slot="conversation.view"] [class$="_column"]) {
-    padding-left: 10px !important;
-    padding-right: 10px !important;
-  }
-
-  :global([data-slot="conversation.view"] [class$="_scroll"]) {
-    padding-left: 10px !important;
-    padding-right: 10px !important;
+  :global([data-phase] [class$="_root"]) {
+    --dsh-chat-content-width: 330px !important;
   }
 
   :global([data-chat-flow]) {
