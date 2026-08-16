@@ -425,6 +425,11 @@
   }
 
   :global([data-queue-dock] [class*="_row"]) {
+    /* The built-in row is a fixed 36px box; a wrapped multi-line preview
+       overflows it and piles onto the next row. Let rows grow with content. */
+    height: auto;
+    min-height: 36px;
+    padding: 8px 5px 8px 12px;
     flex-wrap: wrap;
     align-items: flex-start;
     row-gap: 4px;
