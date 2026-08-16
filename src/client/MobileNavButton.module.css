@@ -114,6 +114,18 @@
     overscroll-behavior: contain;
   }
 
+  /* One collapse control, not two: the floating toggle (☰ -> ✕ at the same
+     top-left spot) is the single drawer key, so hide the built-in collapse
+     button inside the drawer's brand row, and clear the brand logo out from
+     under the floating toggle. */
+  :global(html[data-mobile-nav="open"] [class$="_sidebarCol"] [class$="_toggle"]) {
+    display: none;
+  }
+
+  :global(html[data-mobile-nav="open"] [class$="_sidebarCol"] [class*="_logoRow"]) {
+    padding-left: 48px;
+  }
+
   /* Keep the details column out of the way on phones (it is already
      auto-closed by the built-in solver; this is a belt-and-braces guard). */
   :global([class$="_detailsCol"]) {
