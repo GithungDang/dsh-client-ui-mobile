@@ -508,4 +508,55 @@
     justify-content: flex-end;
     gap: 6px;
   }
+
+  /* ── markdown tables: never overflow the phone viewport horizontally ── */
+  :global([data-chat-flow] table) {
+    max-width: 100%;
+    display: table;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+
+  :global([data-slot="conversation.view"] [class$="_column"]) {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  :global([data-slot="conversation.view"] [class$="_scroll"]) {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  :global([data-chat-flow]) {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  :global([data-chat-flow] [class*="_flowItem"]),
+  :global([data-chat-flow] [class*="_text"]),
+  :global([data-chat-flow] [class*="_content"]) {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  :global([class$="_centerCol"]) {
+    overflow-x: clip !important;
+  }
+
+  :global([data-chat-flow] ol),
+  :global([data-chat-flow] ul) {
+    list-style-position: inside !important;
+    margin-left: 0 !important;
+    padding-left: 1.4em !important;
+  }
+
+  :global([data-chat-flow] li) {
+    overflow-wrap: anywhere !important;
+  }
 }
