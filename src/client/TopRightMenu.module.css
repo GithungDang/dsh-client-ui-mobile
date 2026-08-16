@@ -3,7 +3,8 @@
 
 .layer {
   position: fixed;
-  top: max(8px, env(safe-area-inset-top));
+  /* Vertically center the 32px toggle in the 58px header. */
+  top: max(13px, env(safe-area-inset-top));
   right: 12px;
   z-index: 220;
   pointer-events: none;

@@ -2,7 +2,8 @@
    drawer/sidebar); the top-right "+" menu lives in its own component. */
 .layer {
   position: fixed;
-  top: max(8px, env(safe-area-inset-top));
+  /* Vertically center the 32px toggle in the 58px header (center ~29px). */
+  top: max(13px, env(safe-area-inset-top));
   left: 12px;
   right: auto;
   z-index: 210;
