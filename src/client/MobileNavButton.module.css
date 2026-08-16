@@ -336,7 +336,7 @@
     box-sizing: border-box;
     height: 58px !important;
     min-height: 0 !important;
-    padding-top: 10px;
+    padding-top: 6px;
   }
 
   :global([data-phase] header [class*="_titleRow"]) {
@@ -360,7 +360,7 @@
      own 14px/500, so the container rule alone never enlarged it. */
   :global([data-phase] header [class*="_crumbs"] [class*="_crumb"]) {
     font-size: 16px !important;
-    font-weight: 700 !important;
+    font-weight: 600 !important;
     line-height: 26px;
   }
 
