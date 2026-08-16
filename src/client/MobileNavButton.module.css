@@ -554,5 +554,21 @@
   :global([data-chat-flow] li) {
     overflow-wrap: anywhere !important;
   }
+
+  /* Per-message time/run row (MessageIconActions .timeEnd/.timeStart): built-in
+     white-space:nowrap lets a long 用时 · 首token · tok/s tail spill past the
+     right edge. Constrain the row so it never overflows and ellipsizes the
+     trailing 首 token / tok groups (the 用时 is first, so it is preserved). */
+  :global([class$="_timeEnd"]),
+  :global([class$="_timeStart"]) {
+    /* inline-block so max-width/ellipsis actually clamp the overflowing
+       首token/tok siblings inside the row instead of spilling past the edge */
+    display: inline-block !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
 }
 
