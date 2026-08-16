@@ -147,6 +147,20 @@ export function apply(ctx: ClientContext): void {
     let lastPointerTarget: EventTarget | null = null
     const onPointerDownCapture = (event: PointerEvent): void => {
       lastPointerTarget = event.target
+      // MenuView's built-in dismiss skips taps inside the composer card
+      // ("clicking the textarea or bottom bar must not close the menu"); on
+      // phones tapping the input bar should close the command menu too. The
+      // "+" button is the only programmatic toggle, so click it when the tap
+      // is on the card but not on the menu or the button itself.
+      const target = event.target
+      if (!(target instanceof Element)) return
+      const menu = document.querySelector('[data-composer-card] [class*="_menu"]')
+      if (menu === null) return
+      if (menu.contains(target)) return
+      if (target.closest('button[class*="_add"]') !== null) return
+      if (target.closest('[data-composer-card]') !== null) {
+        document.querySelector<HTMLElement>('[data-composer-card] button[class*="_add"]')?.click()
+      }
     }
     const onFocusCapture = (event: FocusEvent): void => {
       if (!isMobile()) return

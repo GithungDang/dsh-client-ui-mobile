@@ -429,6 +429,12 @@
     display: none;
   }
 
+  /* The command menu's single group is titled 命令; with only one group the
+     label is redundant on a small screen. */
+  :global([class*="_groupTitle"][data-source="command"]) {
+    display: none;
+  }
+
   /* Remove the round/step context meter (轮/步 + LLM/工具耗时) from phones:
      the count is a desktop nicety and the row is crowded. The meter root is
      the only direct-child span of .trailing (model seat renders a div). */
