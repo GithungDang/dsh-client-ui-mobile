@@ -140,8 +140,8 @@
      text and tool blocks read centered instead of left-justified with an
      extra 8px on the right. */
   :global([data-conversation-scroll]) {
-    padding-left: 6px !important;
-    padding-right: 6px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
   }
 
   :global([data-conversation-scroll] [class*="_viewArea"]) {
@@ -150,8 +150,8 @@
   }
 
   :global([data-conversation-scroll] [class*="_flowItem"]) {
-    padding-left: 6px !important;
-    padding-right: 6px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
   }
 
   /* Equalize the message-flow margins: the built-in laid the transcript out
@@ -519,13 +519,13 @@
 
 
   :global([data-slot="conversation.session"] [class$="_flow"]) {
-    padding-left: 6px !important;
-    padding-right: 6px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
   }
 
   :global([data-slot="conversation.session"] [class$="_scroll"]) {
-    padding-left: 6px !important;
-    padding-right: 6px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
   }
 
   :global([data-chat-flow]) {
