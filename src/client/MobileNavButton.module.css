@@ -520,7 +520,17 @@
   }
 
   :global([data-chat-flow]) {
-    padding-left: 6px !important;
-    padding-right: 6px !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  :global([data-chat-flow] [class*="_flowItem"]),
+  :global([data-chat-flow] [class*="_text"]),
+  :global([data-chat-flow] [class*="_content"]) {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 }
