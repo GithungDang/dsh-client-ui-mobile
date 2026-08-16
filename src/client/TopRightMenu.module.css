@@ -16,10 +16,10 @@
 .toggle {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   background: transparent;
   color: var(--dsw-alias-label-primary);
   cursor: pointer;
@@ -29,6 +29,14 @@
 .toggle:hover,
 .toggle:active {
   background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.toggle::after {
+  content: '';
+  display: block;
+  position: absolute;
+  inset: -6px;
+  border-radius: inherit;
 }
 
 .menu {
