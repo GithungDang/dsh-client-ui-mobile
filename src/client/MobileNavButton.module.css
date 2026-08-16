@@ -408,6 +408,13 @@
     display: none;
   }
 
+  /* Remove the round/step context meter (轮/步 + LLM/工具耗时) from phones:
+     the count is a desktop nicety and the row is crowded. The meter root is
+     the only direct-child span of .trailing (model seat renders a div). */
+  :global([data-composer-card] [class*="_trailing"] > span[class*="_root"]) {
+    display: none;
+  }
+
   /* ── queue dock (排队面板) ────────────────────────────────────────────────
      The built-in dock tucks 3px under the input card (negative margin); with
      wrapped preview rows that reads as overlap on phones, so let it sit on the
