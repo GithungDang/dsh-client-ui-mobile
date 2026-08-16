@@ -117,6 +117,22 @@ export function apply(ctx: ClientContext): void {
     return () => mql.removeEventListener('change', onChange)
   }, 'ui-mobile: mobile breakpoint sync')
 
+  // The command menu shows a lone "命令" group title. With a single group the
+  // label is pure noise on a small screen. CSS display:none handles most
+  // cases, but on some devices the label still lingers; remove the node from
+  // the DOM outright so it cannot render anywhere.
+  ctx.effect(() => {
+    const remove: () => void = () => {
+      document.querySelectorAll('[class*="_groupTitle"][data-source="command"]').forEach((el) => {
+        el.remove()
+      })
+    }
+    const observer = new MutationObserver(remove)
+    observer.observe(document.body, { childList: true, subtree: true })
+    remove()
+    return () => observer.disconnect()
+  }, 'ui-mobile: strip command menu group title')
+
   // On phones, the "+" command button pops the virtual keyboard and then
   // traps it: the built-in keepFocus refocuses the composer textarea on
   // mousedown, and the command menu's search input programmatically grabs
@@ -145,25 +161,23 @@ export function apply(ctx: ClientContext): void {
     //    focus change via preventDefault; a user tap on the input itself is
     //    allowed (last pointer target is the input).
     let lastPointerTarget: EventTarget | null = null
-    // Only the command menu (the one with a [data-source="command"] group) is
-    // subject to the composer-tap dismissal. Model / other popups have their
-    // own built-in outside-close; if we matched ANY [class*="_menu"] here, a
-    // tap outside the model menu would have synthetically clicked "+" and
-    // OPENED the command menu — the reported bug.
-    const findCommandMenu = (): HTMLElement | null =>
-      document.querySelector<HTMLElement>(
-        '[data-composer-card] [class*="_menu"] [class*="_groupTitle"][data-source="command"]',
-      )?.closest('[class*="_menu"]') ?? null
+    // Only the command menu participates in the composer-tap dismissal. It is
+    // identified by the "+" button's aria-expanded state (the button toggles
+    // it) rather than the group title — the title node is removed by
+    // "ui-mobile: strip command menu group title," so it cannot be the anchor.
+    const hasCommandMenu = (): boolean => document
+      .querySelector<HTMLElement>('[data-composer-card] button[class*="_add"]')
+      ?.getAttribute('aria-expanded') === 'true'
 
     const onPointerDownCapture = (event: PointerEvent): void => {
       lastPointerTarget = event.target
       const target = event.target
       if (!(target instanceof Element)) return
       // Only run when the command menu is actually open.
-      const cmdMenu = findCommandMenu()
-      if (cmdMenu === null) return
-      if (cmdMenu.contains(target)) return // taps inside the menu pick an item
-      if (target.closest('button[class*="_add"]') !== null) return // "+" handles itself
+      const cmdOpen = hasCommandMenu()
+      if (!cmdOpen) return
+      if (target.closest('[data-composer-card] [class*="_menu"]') !== null) return
+      if (target.closest('button[class*="_add"]') !== null) return
       if (target.closest('[data-composer-card]') !== null) {
         // Tapping anywhere on the input bar closes the command menu.
         document.querySelector<HTMLElement>('[data-composer-card] button[class*="_add"]')?.click()
