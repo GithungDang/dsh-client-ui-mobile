@@ -117,31 +117,31 @@ export function apply(ctx: ClientContext): void {
     return () => mql.removeEventListener('change', onChange)
   }, 'ui-mobile: mobile breakpoint sync')
 
-  // 1) Strip the command menu's lone "命令" group title from the DOM.
-  // 2) Drop the "+" button's hover tooltip (also labeled "命令") which floats
-  //    above the button on phone.
-  ctx.effect(() => {
-    const prune = (): void => {
-      // Group title -> remove outright.
-      document.querySelectorAll('[class*="_groupTitle"][data-source="command"]').forEach((el) => {
-        el.remove()
-      })
-      // Tooltip bubbles labeled 命令 / near the "+" button -> remove.
-      const addBtn = document.querySelector<HTMLElement>('[data-composer-card] button[class*="_add"]')
-      const addRect = addBtn?.getBoundingClientRect()
-      document.querySelectorAll('[role="tooltip"]').forEach((tip) => {
-        const r = tip.getBoundingClientRect()
-        if (r.width === 0 || r.height === 0) return
-        if (addRect && Math.abs(r.left + r.width / 2 - (addRect.left + addRect.width / 2)) < 120 && r.bottom <= addRect.top) {
-          tip.remove()
-        }
-      })
-    }
-    const observer = new MutationObserver(prune)
-    observer.observe(document.body, { childList: true, subtree: true })
-    prune()
-    return () => observer.disconnect()
-  }, 'ui-mobile: strip command group title + "+" tooltip')
+  // Disabled pending a reported regression: the global body MutationObserver
+  // (childList+subtree → prune() with getBoundingClientRect on every DOM
+  // change) is the prime suspect for the "composer disappears after scrolling
+  // a long way and returning to bottom" issue. The command menu's 命令 group
+  // title is already hidden by CSS (display:none), and the "+" button tooltip
+  // is a cosmetic hover bubble, so dropping this JS has no functional loss.
+  // Re-enable once the regression is isolated and fixed.
+  // ctx.effect(() => {
+  //   const prune = (): void => {
+  //     document.querySelectorAll('[class*="_groupTitle"][data-source="command"]').forEach((el) => { el.remove() })
+  //     const addBtn = document.querySelector<HTMLElement>('[data-composer-card] button[class*="_add"]')
+  //     const addRect = addBtn?.getBoundingClientRect()
+  //     document.querySelectorAll('[role="tooltip"]').forEach((tip) => {
+  //       const r = tip.getBoundingClientRect()
+  //       if (r.width === 0 || r.height === 0) return
+  //       if (addRect && Math.abs(r.left + r.width / 2 - (addRect.left + addRect.width / 2)) < 120 && r.bottom <= addRect.top) {
+  //         tip.remove()
+  //       }
+  //     })
+  //   }
+  //   const observer = new MutationObserver(prune)
+  //   observer.observe(document.body, { childList: true, subtree: true })
+  //   prune()
+  //   return () => observer.disconnect()
+  // }, 'ui-mobile: strip command group title + "+" tooltip')
 
   // On phones, the "+" command button pops the virtual keyboard and then
   // traps it: the built-in keepFocus refocuses the composer textarea on
