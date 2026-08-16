@@ -510,9 +510,6 @@
   }
 
 
-  :global([data-phase] [class$="_root"]) {
-    --dsh-chat-content-width: 330px !important;
-  }
 
   :global([data-chat-flow]) {
     margin-left: 0 !important;
@@ -548,19 +545,46 @@
 }
 
 @media (max-width: 768px) {
-  /* Per-message time/run row (MessageIconActions .timeEnd/.timeStart): built-in
-     white-space:nowrap lets a long 用时 · 首token · tok/s tail spill past the
-     right edge. Constrain the row so it never overflows and ellipsizes the
-     trailing 首 token / tok groups (the 用时 is first, so it is preserved). */
-  :global([class$="_timeEnd"]),
-  :global([class$="_timeStart"]) {
-    /* inline-block so max-width/ellipsis actually clamp the overflowing
-       首token/tok siblings inside the row instead of spilling past the edge */
-    display: inline-block !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap;
-    vertical-align: middle;
+}
+
+/* Question popup, long-title safety: with a very long title the built-in card
+   can flex-shrink its header so the option list runs up into the title text.
+   Anchor on the popup's stable data-question-key: keep the header at natural
+   height, give the body its own scroll region, so title and options never
+   overlap regardless of title length. */
+@media (max-width: 768px) {
+  /* With an extremely long title, the built-in 60vh card cap hides the option
+     list (title eats all the space). Make the whole card + its body one scroll
+     region so title AND options stay reachable; nothing overlaps or hides. */
+  :global([data-question-key] [class$="_card"]) {
+    display: block !important;
+    max-height: min(60vh, 520px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+  :global([data-question-key] [class$="_header"]) {
+    flex: none !important;
+  }
+  :global([data-question-key] [class$="_body"]) {
+    overflow: visible !important;
+  }
+}
+
+/* Question popup long-title safety: on very narrow phones a long title wraps
+   into many lines that push the option list up under/over the title text.
+   Cap the title block and let it scroll internally, so no matter how long the
+   title is, the options below stay visible and never overlap it. */
+@media (max-width: 768px) {
+  :global([data-question-key] [class$="_title"]),
+  :global([data-question-key] .title) {
+    max-height: 26vh !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+  }
+  :global([data-question-key] [class$="_body"]),
+  :global([data-question-key] [class$="_options"]) {
+    flex: 1 1 auto !important;
+    max-height: none !important;
+    overflow: visible !important;
   }
 }
