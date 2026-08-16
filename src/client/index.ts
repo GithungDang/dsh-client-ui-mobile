@@ -79,22 +79,23 @@ export function apply(ctx: ClientContext): void {
     return dispose
   }, 'ui-mobile: top-right actions menu')
 
-  // On mobile, selecting a session from the drawer should close the drawer so
-  // the conversation is actually usable. Without this, the drawer stays open
-  // over the chat and blocks tool rows / messages.
+  // On mobile, selecting a session (or tapping the built-in new-session
+  // button) from the drawer should close the drawer so the conversation is
+  // actually usable. Without this, the drawer stays open over the chat and
+  // blocks tool rows / messages / the composer.
   ctx.effect(() => {
     const onClick = (event: MouseEvent): void => {
       if (!window.matchMedia(MOBILE_QUERY).matches) return
       const target = event.target
       if (!(target instanceof Element)) return
-      if (target.closest('[class$="_sessionRow"]') === null) return
+      if (target.closest('[class$="_sessionRow"], [class$="_newSession"], button[aria-label="新建会话"]') === null) return
       if (document.querySelector('[role="dialog"]') !== null) return
       if (document.documentElement.getAttribute('data-mobile-nav') !== 'open') return
       ctx.layout.toggleSidebar()
     }
     document.addEventListener('click', onClick, true)
     return () => document.removeEventListener('click', onClick, true)
-  }, 'ui-mobile: auto-close drawer on session select')
+  }, 'ui-mobile: auto-close drawer on session select / new session')
 
   // Follow the built-in AppFrame's collapsed state so any sidebar close path
   // keeps the mobile drawer attribute in sync.
