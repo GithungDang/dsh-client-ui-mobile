@@ -117,32 +117,76 @@ export function apply(ctx: ClientContext): void {
     return () => mql.removeEventListener('change', onChange)
   }, 'ui-mobile: mobile breakpoint sync')
 
-  // Keep only the count + duration on the composer stats line: the built-in
-  // StatsLine pipes 轮·步 | LLM .. | 首 token 平均.. | ..tok/s | 缓存命中 | 输入/输出 tok
-  // into one row (locale 'stats.*'). On a narrow screen the tail overflows
-  // past the right edge. Strip every group span whose text is a ttft/tps/cache
-  // /token group (by their known prefixes) so only counts and durations remain.
+  // Keep only the count + duration on the composer stats line, and strip the
+  // 首 token / tok tail from each message's time row (MessageIconActions
+  // .timeEnd/.timeStart) so nothing overflows the narrow viewport. The built-in
+  // rows are 时间 · 用时 · 首token 平均 · tok/s — we drop the trailing groups and
+  // keep the clock + run duration.
   ctx.effect(() => {
     const DROP = /首\s*token|tok\/s|缓存命中|输入|输出|\btps\b|\btokens?\b/i
-    const clean: () => void = () => {
-      for (const root of document.querySelectorAll('[data-composer-seat] [class*="_root"]')) {
-        const spans = [...root.querySelectorAll(':scope > span')]
-        for (const span of spans) {
-          if (!DROP.test(span.textContent ?? '')) continue
-          // Remove the preceding separator (the bare '|' span with aria-hidden).
-          const prev = span.previousElementSibling
-          if (prev instanceof HTMLElement && prev.getAttribute('aria-hidden') !== null) {
+    const stats = (): HTMLElement | null => {
+      for (const root of document.querySelectorAll<HTMLElement>('[data-composer-seat] [class$="_root"]')) {
+        const text = root.textContent ?? ''
+        if (/\d+\s*轮|\d+\s*步|LLM|m\d+s|用\s*时|秒/.test(text)) return root
+      }
+      return null
+    }
+    // Drop a trailing group from a time row: remove the text node and the dot
+    // separator immediately before it.
+    const stripGroup = (container: HTMLElement): void => {
+      for (const node of [...container.childNodes]) {
+        if (node.nodeType !== Node.TEXT_NODE) continue
+        const text = (node.textContent ?? '').trim()
+        if (text === '' || !DROP.test(text)) continue
+        // Remove the '·' separator node just before this text node.
+        let prev = node.previousSibling
+        for (let n = 0; prev !== null && n < 3; n++) {
+          if (prev.nodeType === Node.TEXT_NODE && (prev.textContent ?? '').trim() === '·') {
             prev.remove()
+            break
           }
+          prev = prev.previousSibling
+        }
+        node.remove()
+      }
+      // Trim a dangling tail like "用时 2分22秒 · ·": drop trailing '·' nodes.
+      let changed = true
+      while (changed) {
+        changed = false
+        const nodes = [...container.childNodes]
+        for (let i = nodes.length - 1; i >= 0; i--) {
+          const node = nodes[i]
+          if (node.textContent === undefined) continue
+          if ((node.textContent ?? '').trim() !== '·') continue
+          // Only drop if it is the very last meaningful node.
+          const after = container.childNodes[i + 1]
+          const trailingOnly = after === undefined || (after.textContent ?? '').trim() === ''
+          if (trailingOnly) {
+            node.remove()
+            changed = true
+          }
+        }
+      }
+    }
+    const clean = (): void => {
+      // StatsLine (composer bottom).
+      const root = stats()
+      if (root !== null) {
+        for (const span of [...root.querySelectorAll(':scope > span')]) {
+          if (!DROP.test(span.textContent ?? '')) continue
+          const prev = span.previousElementSibling
+          if (prev instanceof HTMLElement && prev.getAttribute('aria-hidden') !== null) prev.remove()
           span.remove()
         }
       }
+      // Per-message time rows.
+      document.querySelectorAll<HTMLElement>('[class$="_timeEnd"], [class$="_timeStart"]').forEach(stripGroup)
     }
     const observer = new MutationObserver(clean)
     observer.observe(document.body, { childList: true, subtree: true })
     clean()
     return () => observer.disconnect()
-  }, 'ui-mobile: condense composer stats line')
+  }, 'ui-mobile: condense stats line + per-message time rows')
 
   // Disabled pending a reported regression: the global body MutationObserver
   // (childList+subtree → prune() with getBoundingClientRect on every DOM
