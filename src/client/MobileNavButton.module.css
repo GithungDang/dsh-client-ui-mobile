@@ -1,10 +1,10 @@
-/* Local floating-control styles. */
+/* Local floating-control styles. The nav toggle stays top-LEFT (opens the
+   drawer/sidebar); the top-right "+" menu lives in its own component. */
 .layer {
   position: fixed;
-  /* Align with the conversation header's title row (header padding-top 8px)
-     so the toggle reads as part of the top chrome, not a floating orb. */
   top: max(8px, env(safe-area-inset-top));
   left: 12px;
+  right: auto;
   z-index: 210;
   pointer-events: none;
 }
@@ -308,82 +308,70 @@
     pointer-events: auto;
   }
 
-  /* ── conversation header: keep the session title clear of the floating nav ──
-     The 44px toggle sits at (12,12) over the header's breadcrumb row. On
-     phones indent the title row and let the breadcrumb truncate instead of
-     wrapping. The tabs row below stays unindented. */
+  /* ── conversation header: mobile-app style ────────────────────────────────
+     Centered bold title with the mode as a small light subtitle beneath it
+     (ChatGPT-mobile pattern); the drawer toggle lives top-right; the
+     session-log utility is hidden on phones; the view tabs center below. */
   :global([data-phase] header [class*="_titleRow"]) {
-    padding-left: 56px !important;
+    position: relative;
+    height: 34px;
   }
 
   :global([data-phase] header [class*="_crumbs"]) {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 55vw;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    /* One step up from the built-in 16px so the session title reads better. */
-    font-size: 17px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
   }
 
-  /* Let the title cluster claim the row's free width so long session titles
-     ellipsize at the utilities edge instead of stopping at natural size. */
   :global([data-phase] header [class*="_titleCluster"]) {
     flex: 1;
     min-width: 0;
   }
 
-  /* The mode label (e.g. 创造模式) is a non-interactive title-tooltip span.
-     Keep it visible but move it out of the title row: pin it to the free
-     right end of the tabs row so the session title gets the full first line. */
+  /* The mode label (创造模式 / 极简模式) becomes a small light subtitle under
+     the title, centered. */
   :global([data-phase] header [class*="_headerActions"]) {
     display: flex;
     position: absolute;
-    top: 44px;
-    right: 12px;
+    top: 34px;
+    left: 50%;
+    transform: translateX(-50%);
     align-items: center;
+    justify-content: center;
   }
 
-  /* Collapse the mode label to its icon on phones (the tooltip still works);
-     the text eats width the session title needs. */
   :global([data-phase] header [class*="_headerActions"] [class*="_label"]) {
-    font-size: 0;
-  }
-
-  /* Compact the session-log utility button to an icon-only control: the
-     built-in style pins a 111px min-width and a long English label. */
-  :global([data-phase] header [class$="_sessionLogButton"]) {
-    min-width: 0;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-  }
-
-  :global([data-phase] header [class$="_sessionLogButton"] span) {
-    display: none;
-  }
-
-  /* The view tabs (对话/轨迹) start at the frame edge; keep them clear of the
-     floating nav exactly like the title row, then indent them a step right of
-     the title and shrink/dim them so they read as subordinate to the session
-     title instead of competing with it. Note `[class*="_tab"]` substring-matches
-     the `_tabs` container too, so the button rules exclude it via :not(). */
-  :global([data-phase] header [class*="_tabs"]) {
-    padding-left: 76px !important;
-  }
-
-  :global([data-phase] header [class*="_tab"]:not([class*="_tabs"])) {
-    font-size: 12px;
-    height: 26px;
-    padding: 0 6px;
-  }
-
-  :global([data-phase] header [class*="_tab"]:not([class*="_tabs"]):not([class*="_tabActive"])) {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
     color: var(--dsw-alias-label-dimmed);
   }
 
-  /* ── drawer brand row: keep the dsh logo clear of the floating nav ── */
-  :global(html[data-mobile-nav="open"] [class$="_sidebarCol"] [class*="_logoRow"]) {
-    padding-left: 56px;
+  :global([data-phase] header [class*="_headerActions"] [class*="_label"] svg) {
+    width: 12px;
+    height: 12px;
+  }
+
+  /* The session-log utility is hidden on phones: the drawer toggle takes the
+     top-right corner. */
+  :global([data-phase] header [class*="_headerUtilities"]) {
+    display: none;
+  }
+
+  /* The view tabs (对话/轨迹) are hidden on phones; their functions move into
+     the top-right "+" menu (the menu clicks the hidden built-in controls, so
+     the switching logic stays in the shell). */
+  :global([data-phase] header [class*="_tabs"]) {
+    display: none;
   }
 
   /* ── composer / bottom area ──

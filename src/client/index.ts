@@ -17,6 +17,7 @@ import type { ClientContext } from '@deepseek-ai/dsh-client-runtime/client'
 import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
 import { MobileNavButton } from './MobileNavButton.tsx'
 import type { MobileNavInjected } from './MobileNavButton.tsx'
+import { TopRightMenu } from './TopRightMenu.tsx'
 
 /** Required services (cordis fiber inject). */
 export const inject = ['slots', 'layout']
@@ -65,6 +66,17 @@ export function apply(ctx: ClientContext): void {
     }, MobileNavButton)
     return dispose
   }, 'ui-mobile: floating nav toggle')
+
+  // Top-right "+" menu: consolidates the hidden session-log button and the
+  // 对话/轨迹 view tabs into one phone-friendly dropdown.
+  ctx.effect(() => {
+    const dispose = ctx.slots.register({
+      name: 'shell.overlay',
+      id: 'mobile-top-menu',
+      order: 90,
+    }, TopRightMenu)
+    return dispose
+  }, 'ui-mobile: top-right actions menu')
 
   // On mobile, selecting a session from the drawer should close the drawer so
   // the conversation is actually usable. Without this, the drawer stays open
