@@ -272,6 +272,15 @@
     max-height: 200px !important;
   }
 
+  /* IN and OUT share the same .ioText (pre-wrap + break-word). Force a
+     permissive line break so a very long unbroken token (a huge path or
+     command) that a pre-wrap wrapper refuses to break still ends up readable
+     on both sides — IN and OUT stay identical. */
+  :global([class$="_callRow"] [class$="_ioText"]) {
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+  }
+
   :global([class$="_callRow"] [class$="_ioLabel"]) {
     position: static !important;
   }
