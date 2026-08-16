@@ -134,10 +134,29 @@
     display: none;
   }
 
-  /* Give the conversation more usable width. */
-  :global([class$="_centerCol"] [class$="_scroll"]) {
-    padding-left: 12px !important;
-    padding-right: 12px !important;
+  /* Give the conversation symmetric usable margins. The built-in scroll body
+     is [data-conversation-scroll] (its class is _scrollBody, so the old
+     [class$="_scroll"] rule never matched); force symmetric inline padding so
+     text and tool blocks read centered instead of left-justified with an
+     extra 8px on the right. */
+  :global([data-conversation-scroll]) {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  :global([data-conversation-scroll] [class*="_viewArea"]) {
+    width: calc(100% + 8px) !important;
+    max-width: none !important;
+  }
+
+  /* Equalize the message-flow margins: the built-in laid the transcript out
+     left 12px / right 20px, so text and tool blocks read off-center on a
+     phone. Pin explicit symmetric margins on the blocks. */
+  :global([data-chat-flow] > * :is(p, pre, ul, ol, table, [class*="_message"], [class*="_flow"])) {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 
   /* Reduce the composer side clearance on phones. */
