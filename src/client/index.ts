@@ -145,20 +145,27 @@ export function apply(ctx: ClientContext): void {
     //    focus change via preventDefault; a user tap on the input itself is
     //    allowed (last pointer target is the input).
     let lastPointerTarget: EventTarget | null = null
+    // Only the command menu (the one with a [data-source="command"] group) is
+    // subject to the composer-tap dismissal. Model / other popups have their
+    // own built-in outside-close; if we matched ANY [class*="_menu"] here, a
+    // tap outside the model menu would have synthetically clicked "+" and
+    // OPENED the command menu — the reported bug.
+    const findCommandMenu = (): HTMLElement | null =>
+      document.querySelector<HTMLElement>(
+        '[data-composer-card] [class*="_menu"] [class*="_groupTitle"][data-source="command"]',
+      )?.closest('[class*="_menu"]') ?? null
+
     const onPointerDownCapture = (event: PointerEvent): void => {
       lastPointerTarget = event.target
-      // MenuView's built-in dismiss skips taps inside the composer card
-      // ("clicking the textarea or bottom bar must not close the menu"); on
-      // phones tapping the input bar should close the command menu too. The
-      // "+" button is the only programmatic toggle, so click it when the tap
-      // is on the card but not on the menu or the button itself.
       const target = event.target
       if (!(target instanceof Element)) return
-      const menu = document.querySelector('[data-composer-card] [class*="_menu"]')
-      if (menu === null) return
-      if (menu.contains(target)) return
-      if (target.closest('button[class*="_add"]') !== null) return
+      // Only run when the command menu is actually open.
+      const cmdMenu = findCommandMenu()
+      if (cmdMenu === null) return
+      if (cmdMenu.contains(target)) return // taps inside the menu pick an item
+      if (target.closest('button[class*="_add"]') !== null) return // "+" handles itself
       if (target.closest('[data-composer-card]') !== null) {
+        // Tapping anywhere on the input bar closes the command menu.
         document.querySelector<HTMLElement>('[data-composer-card] button[class*="_add"]')?.click()
       }
     }
