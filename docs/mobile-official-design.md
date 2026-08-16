@@ -39,8 +39,8 @@
 | 抽屉品牌行避让 | `packages/client/ui-sidebar/src/client/`（logo 行） | 窄屏抽屉打开时 logo 行左内边距 56px，浮动按钮不遮 logo |
 | 设计 token | `packages/client/ui-theme/src/styles/` | 新增 `--dsw-*`：`--dsw-mobile-breakpoint`、`--dsw-drawer-width`、`--dsw-safe-area-bottom`（fallback `env(safe-area-inset-bottom)`） |
 | composer 安全区 | `packages/client/ui-conversation/src/client/skeleton/InputBar.tsx` | `padding-bottom: env(safe-area-inset-bottom)`；输入框 min-height 40px + `font-size: 16px`（防 iOS 聚焦缩放） |
-| 排队 dock（QueueDock） | `packages/client/ui-conversation/src/client/queue/QueueDock.tsx` | 窄屏下列表 `max-height: 35vh; overflow-y: auto`，长队列在 dock 内滚动，不撑爆视口 |
-| 任务清单（TodoPanel） | `packages/client/ui-conversation/src/client/skeleton/TodoPanel.tsx` | 窄屏下列表 `max-height: 30vh; overflow-y: auto`，长计划同样内部滚动 |
+| 排队 dock（QueueDock） | `packages/client/ui-conversation/src/client/queue/QueueDock.tsx` | 内建列表已 `max-height: 180px` 滚动；窄屏下让预览文本换行、行高自适应（默认单行省略会截断排队消息全文） |
+| 任务清单（TodoPanel） | `packages/client/ui-conversation/src/client/skeleton/TodoPanel.tsx` | 内建列表已 `max-height: 180px` 滚动，无需额外约束 |
 | 轨迹面板触摸滚动 | `packages/client/ui-trajectory/src/` | `overflow-y: auto` + `-webkit-overflow-scrolling: touch` |
 | 设置面板全屏 | `packages/client/ui-settings/src/` | ≤768px：`100vw × 100dvh`，左侧 188px 导航改顶部横向 tab 条 |
 | 工具调用行 | `packages/client/ui-tool/src/` | 最小高度 40px、摘要换行、IN/OUT 单列堆叠、Inspect 触屏常显 |

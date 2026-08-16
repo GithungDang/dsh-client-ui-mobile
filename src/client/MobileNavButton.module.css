@@ -16,18 +16,23 @@
   place-items: center;
   width: 44px;
   height: 44px;
-  /* Match the built-in floating-surface style (AppFrame handle): 10px radius,
-     the button-floating fill tokens, and the thin dark-mode border. */
-  border: 1px solid var(--dsw-alias-border-l2-darkmode-thin);
-  border-radius: 10px;
-  background: var(--dsw-alias-button-floating-fill);
+  /* Toolbar-icon-button look so it blends into the transparent header: no
+     floating fill or shadow, just a subtle border like the built-in
+     session-log / header utility buttons. */
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 12px;
+  background: transparent;
   color: var(--dsw-alias-label-primary);
-  box-shadow: var(--dsw-shadow-lv2);
   cursor: pointer;
+  transition: background 120ms ease;
 }
 
 .toggle:hover {
-  background: var(--dsw-alias-button-floating-hover);
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.toggle:active {
+  background: var(--dsw-alias-interactive-bg-active);
 }
 
 .backdrop {
@@ -289,6 +294,45 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    /* One step up from the built-in 16px so the session title reads better. */
+    font-size: 17px;
+  }
+
+  /* Let the title cluster claim the row's free width so long session titles
+     ellipsize at the utilities edge instead of stopping at natural size. */
+  :global([data-phase] header [class*="_titleCluster"]) {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* The mode label (e.g. 创造模式) is a non-interactive title-tooltip span.
+     Keep it visible but move it out of the title row: pin it to the free
+     right end of the tabs row so the session title gets the full first line. */
+  :global([data-phase] header [class*="_headerActions"]) {
+    display: flex;
+    position: absolute;
+    top: 44px;
+    right: 12px;
+    align-items: center;
+  }
+
+  /* Compact the session-log utility button to an icon-only control: the
+     built-in style pins a 111px min-width and a long English label. */
+  :global([data-phase] header [class$="_sessionLogButton"]) {
+    min-width: 0;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+  }
+
+  :global([data-phase] header [class$="_sessionLogButton"] span) {
+    display: none;
+  }
+
+  /* The view tabs (对话/轨迹) start at the frame edge; keep them clear of the
+     floating nav exactly like the title row. */
+  :global([data-phase] header [class*="_tabs"]) {
+    padding-left: 56px;
   }
 
   /* ── drawer brand row: keep the dsh logo clear of the floating nav ── */
@@ -309,21 +353,20 @@
     font-size: 16px !important;
   }
 
-  /* ── queue dock (排队面板): a long queue must scroll inside the dock ──
-     instead of growing the input zone beyond the viewport. */
-  :global([data-queue-dock] [class*="_list"]) {
-    max-height: 35vh;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
+  /* ── queue dock (排队面板): keep the built-in 180px list cap; on phones
+     the single-line preview truncates the queued message, so let it wrap and
+     let rows grow — the built-in list scrolls the overflow. */
+  :global([data-queue-dock] [class*="_preview"]) {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    line-height: 18px;
   }
 
-  /* ── todo panel (任务清单): same containment for long plans ── */
-  :global([data-testid="todo-panel"] [class*="_list"]) {
-    max-height: 30vh;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
+  :global([data-queue-dock] [class*="_row"]) {
+    height: auto;
+    min-height: 36px;
+    padding: 8px 5px 8px 12px;
   }
 
   /* ── markdown tables: never overflow the phone viewport horizontally ── */
