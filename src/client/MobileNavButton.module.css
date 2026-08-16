@@ -341,14 +341,14 @@
        border-box keeps the total exact. 64px = 10px pad + 32px title row +
        22px mode subtitle. */
     box-sizing: border-box;
-    height: 60px !important;
+    height: 58px !important;
     min-height: 0 !important;
     padding-top: 10px;
   }
 
   :global([data-phase] header [class*="_titleRow"]) {
     position: relative;
-    height: 28px !important;
+    height: 26px !important;
   }
 
   :global([data-phase] header [class*="_crumbs"]) {
@@ -361,8 +361,14 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     text-align: center;
-    font-size: 20px;
-    font-weight: 700;
+  }
+
+  /* The title text lives in the crumb BUTTONS; the built-in .crumb sets its
+     own 14px/500, so the container rule alone never enlarged it. */
+  :global([data-phase] header [class*="_crumbs"] [class*="_crumb"]) {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    line-height: 26px;
   }
 
   :global([data-phase] header [class*="_titleCluster"]) {
@@ -375,7 +381,7 @@
   :global([data-phase] header [class*="_headerActions"]) {
     display: flex;
     position: absolute;
-    top: 28px;
+    top: 26px;
     left: 50%;
     transform: translateX(-50%);
     align-items: center;
