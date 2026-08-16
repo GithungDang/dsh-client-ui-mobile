@@ -70,11 +70,11 @@ export function MobileNavButton({ toggleSidebar }: MobileNavButtonProps) {
         onClick={onToggle}
       >
         {open ? (
-          <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden>
+          <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden>
             <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
         ) : (
-          <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden>
+          <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden>
             <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
         )}

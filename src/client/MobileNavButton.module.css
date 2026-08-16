@@ -1,7 +1,9 @@
 /* Local floating-control styles. */
 .layer {
   position: fixed;
-  top: max(12px, env(safe-area-inset-top));
+  /* Align with the conversation header's title row (header padding-top 8px)
+     so the toggle reads as part of the top chrome, not a floating orb. */
+  top: max(8px, env(safe-area-inset-top));
   left: 12px;
   z-index: 210;
   pointer-events: none;
@@ -16,10 +18,9 @@
   place-items: center;
   width: 44px;
   height: 44px;
-  /* Toolbar-icon-button look so it blends into the transparent header: no
-     floating fill or shadow, just a subtle border like the built-in
-     session-log / header utility buttons. */
-  border: 1px solid var(--dsw-alias-border-l2);
+  /* Borderless icon button: the user wants the drawer glyph to sit quietly
+     in the header, not framed. The 44px box stays for the touch target. */
+  border: none;
   border-radius: 12px;
   background: transparent;
   color: var(--dsw-alias-label-primary);
@@ -334,9 +335,22 @@
   }
 
   /* The view tabs (对话/轨迹) start at the frame edge; keep them clear of the
-     floating nav exactly like the title row. */
+     floating nav exactly like the title row, then indent them a step right of
+     the title and shrink/dim them so they read as subordinate to the session
+     title instead of competing with it. Note `[class*="_tab"]` substring-matches
+     the `_tabs` container too, so the button rules exclude it via :not(). */
   :global([data-phase] header [class*="_tabs"]) {
-    padding-left: 56px;
+    padding-left: 76px !important;
+  }
+
+  :global([data-phase] header [class*="_tab"]:not([class*="_tabs"])) {
+    font-size: 12px;
+    height: 26px;
+    padding: 0 6px;
+  }
+
+  :global([data-phase] header [class*="_tab"]:not([class*="_tabs"]):not([class*="_tabActive"])) {
+    color: var(--dsw-alias-label-dimmed);
   }
 
   /* ── drawer brand row: keep the dsh logo clear of the floating nav ── */
