@@ -30,6 +30,7 @@ export function apply(ctx: ClientContext): void {
   const MOBILE_QUERY = '(max-width: 768px)'
   const FRAME_SELECTOR = '[class$="_frame"]'
 
+
   // Sync the CSS drawer attribute from the built-in layout's source of truth
   // (`data-sidebar-collapsed` on AppFrame). This covers the initial state,
   // the built-in collapse button, Esc/other close paths, and desktop↔mobile

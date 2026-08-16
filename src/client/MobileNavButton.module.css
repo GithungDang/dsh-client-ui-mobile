@@ -323,9 +323,6 @@
   :global(button[class$="_sessionOverflowButton"]),
   :global(button[class$="_action"]) {
     position: relative;
-    /* Some built-in buttons clip with overflow:hidden, which would also clip
-       the expanded ::after hit area. Let the hit-area pseudo extend past the
-       visual box on mobile. */
     overflow: visible !important;
   }
 
