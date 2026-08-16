@@ -27,11 +27,6 @@
   transition: background 120ms ease;
 }
 
-.toggle:hover,
-.toggle:active {
-  background: var(--dsw-alias-interactive-bg-hover);
-}
-
 .toggle::after {
   content: '';
   display: block;

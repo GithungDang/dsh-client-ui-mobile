@@ -30,14 +30,6 @@
   transition: background 120ms ease;
 }
 
-.toggle:hover {
-  background: var(--dsw-alias-interactive-bg-hover);
-}
-
-.toggle:active {
-  background: var(--dsw-alias-interactive-bg-active);
-}
-
 .toggle::after {
   content: '';
   display: block;
