@@ -34,13 +34,24 @@
 | 断点 + 抽屉状态机 | `packages/client/ui-layout/src/`（layout store） | `LayoutState` 增加 `narrow: boolean`（matchMedia ≤768px 驱动）与 `drawerOpen: boolean`；`toggleSidebar()` 在窄屏下切换 drawerOpen。**单一事实源**取代插件的 `data-mobile-nav` 属性机 |
 | 响应式布局样式 | `packages/client/ui-layout/src/AppFrame.module.css` | 窄屏媒体查询：grid 改为 `0 minmax(0,1fr) 0`，sidebarCol 变 `position: fixed` 抽屉；不依赖类名后缀，直接改组件样式 |
 | 抽屉遮罩/层级 | 同上 + `packages/client/ui-theme/src/styles/` | 抽屉宽度 `min(82vw, 320px)`；遮罩 z-index 低于设置 dialog（`body:has([role="dialog"])` 时降级） |
-| 浮动导航按钮 | 复用现有 `shell.overlay` slot（ui-layout SlotMap 已声明），或新增 `shell.mobileNav` | 44×44 按钮，点击驱动 store 的 drawerOpen；组件 props 走四 shares 派生 |
+| 浮动导航按钮 | 复用现有 `shell.overlay` slot（ui-layout SlotMap 已声明），或新增 `shell.mobileNav` | 44×44 按钮，样式用 `--dsw-alias-button-floating-*` token（10px 圆角，与 AppFrame 浮动手柄一致）；点击驱动 store 的 drawerOpen |
+| 会话顶栏避让 | `packages/client/ui-conversation/src/client/skeleton/ConversationSession.tsx` | 窄屏下 titleRow 左内边距 56px（给浮动按钮让位），面包屑 `text-overflow: ellipsis` 截断；官方版可在 header 内直接布局 |
+| 抽屉品牌行避让 | `packages/client/ui-sidebar/src/client/`（logo 行） | 窄屏抽屉打开时 logo 行左内边距 56px，浮动按钮不遮 logo |
 | 设计 token | `packages/client/ui-theme/src/styles/` | 新增 `--dsw-*`：`--dsw-mobile-breakpoint`、`--dsw-drawer-width`、`--dsw-safe-area-bottom`（fallback `env(safe-area-inset-bottom)`） |
-| composer 安全区 | `packages/client/ui-conversation/src/`（composer 组件 CSS） | `position: sticky/fixed` + `padding-bottom: env(safe-area-inset-bottom)` |
+| composer 安全区 | `packages/client/ui-conversation/src/client/skeleton/InputBar.tsx` | `padding-bottom: env(safe-area-inset-bottom)`；输入框 min-height 40px + `font-size: 16px`（防 iOS 聚焦缩放） |
+| 排队 dock（QueueDock） | `packages/client/ui-conversation/src/client/queue/QueueDock.tsx` | 窄屏下列表 `max-height: 35vh; overflow-y: auto`，长队列在 dock 内滚动，不撑爆视口 |
+| 任务清单（TodoPanel） | `packages/client/ui-conversation/src/client/skeleton/TodoPanel.tsx` | 窄屏下列表 `max-height: 30vh; overflow-y: auto`，长计划同样内部滚动 |
 | 轨迹面板触摸滚动 | `packages/client/ui-trajectory/src/` | `overflow-y: auto` + `-webkit-overflow-scrolling: touch` |
 | 设置面板全屏 | `packages/client/ui-settings/src/` | ≤768px：`100vw × 100dvh`，左侧 188px 导航改顶部横向 tab 条 |
 | 工具调用行 | `packages/client/ui-tool/src/` | 最小高度 40px、摘要换行、IN/OUT 单列堆叠、Inspect 触屏常显 |
+| Markdown 表格 | ui-conversation 消息渲染 | 窄屏 `display: block; overflow-x: auto`，杜绝横向撑破视口 |
 | 触控热区 | 各按钮组件 CSS（`::after` 扩展） | 主要按钮 ≥44×44，`overflow: visible` |
+
+> **插件侧使用的稳定钩子**（本仓库实现已用，官方实现可据此映射）：
+> `[data-phase] header`（会话顶栏）、`[data-composer-seat]`、`[data-composer-card]`、
+> `[data-queue-dock]`、`[data-testid="todo-panel"]`、`[data-chat-flow]`、
+> `[data-conversation-scroll]`。这些 data 属性随内置组件长期稳定，比 CSS-module
+> 哈希类名可靠。
 
 ## 状态机设计（替代插件的 DOM 属性方案）
 
