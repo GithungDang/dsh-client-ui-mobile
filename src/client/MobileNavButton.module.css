@@ -143,14 +143,18 @@
   /* ── settings modal mobile adaptation ─────────────────────────────────────
      The built-in settings panel is a desktop two-column 800px dialog. On
      phones turn it into a full-screen stacked layout: nav becomes a compact
-     horizontal tab strip and the content column gets the full width. */
-  :global([class$="_overlay"]) {
+     horizontal tab strip and the content column gets the full width.
+     Every rule here is scoped under the settings overlay
+     ([class$="_overlay"][role="presentation"]): the bare `[class$="_panel"]`
+     form once matched ANY class ending in "_panel" (notably the queue-dock
+     panel) and forced it to 100vh. */
+  :global([class$="_overlay"][role="presentation"]) {
     align-items: stretch !important;
     justify-content: stretch !important;
     padding: 0 !important;
   }
 
-  :global([class$="_panel"]) {
+  :global([class$="_overlay"][role="presentation"] > [class$="_panel"]) {
     width: 100vw !important;
     max-width: 100vw !important;
     height: 100vh !important;
@@ -160,7 +164,7 @@
     flex-direction: column !important;
   }
 
-  :global([class$="_nav"]) {
+  :global([class$="_overlay"][role="presentation"] [class$="_nav"]) {
     flex: none !important;
     flex-direction: row !important;
     align-items: center !important;
@@ -171,35 +175,35 @@
     border-bottom: 1px solid var(--dsw-alias-border-l1) !important;
   }
 
-  :global([class$="_navTitle"]) {
+  :global([class$="_overlay"][role="presentation"] [class$="_navTitle"]) {
     flex: none !important;
     padding: 0 8px !important;
   }
 
-  :global([class$="_navList"]) {
+  :global([class$="_overlay"][role="presentation"] [class$="_navList"]) {
     flex-direction: row !important;
     gap: 4px !important;
   }
 
-  :global([class$="_navCell"]) {
+  :global([class$="_overlay"][role="presentation"] [class$="_navCell"]) {
     flex: none !important;
     height: 36px !important;
     padding: 0 12px !important;
   }
 
-  :global([class$="_content"]) {
+  :global([class$="_overlay"][role="presentation"] [class$="_content"]) {
     flex: 1 !important;
     width: 100% !important;
     min-height: 0 !important;
   }
 
-  :global([class$="_header"]) {
+  :global([class$="_overlay"][role="presentation"] [class$="_header"]) {
     height: auto !important;
     min-height: 48px !important;
     padding: max(8px, env(safe-area-inset-top)) 12px 4px !important;
   }
 
-  :global([class$="_options"]) {
+  :global([class$="_overlay"][role="presentation"] [class$="_options"]) {
     padding: 0 16px max(16px, env(safe-area-inset-bottom)) !important;
   }
 
