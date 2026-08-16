@@ -140,8 +140,8 @@
      text and tool blocks read centered instead of left-justified with an
      extra 8px on the right. */
   :global([data-conversation-scroll]) {
-    padding-left: 10px !important;
-    padding-right: 10px !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
   }
 
   :global([data-conversation-scroll] [class*="_viewArea"]) {
