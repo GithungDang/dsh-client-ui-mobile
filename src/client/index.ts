@@ -104,4 +104,54 @@ export function apply(ctx: ClientContext): void {
     mql.addEventListener('change', onChange)
     return () => mql.removeEventListener('change', onChange)
   }, 'ui-mobile: mobile breakpoint sync')
+
+  // On phones, the "+" command button pops the virtual keyboard and then
+  // traps it: the built-in keepFocus refocuses the composer textarea on
+  // mousedown, and the command menu's search input programmatically grabs
+  // focus on open. With the keyboard up, outside taps land on the keyboard
+  // instead of the page, so the menu can only be dismissed via "+" again.
+  // Two capture-phase interceptions keep the keyboard down on mobile while
+  // the menu stays usable (tapping the search input itself still focuses it).
+  ctx.effect(() => {
+    const mql = window.matchMedia(MOBILE_QUERY)
+    const isMobile = (): boolean => mql.matches
+
+    // 1) Stop the built-in keepFocus handler from refocusing the textarea
+    //    when the "+" button is tapped. Capture stopPropagation skips the
+    //    button's own mousedown handler; the click that opens the menu still
+    //    fires (click is a separate event).
+    const onMouseDownCapture = (event: MouseEvent): void => {
+      if (!isMobile()) return
+      const target = event.target
+      if (!(target instanceof Element)) return
+      if (target.closest('[data-composer-card] button[class*="_add"]') === null) return
+      event.stopPropagation()
+    }
+
+    // 2) Prevent the command menu's search input from programmatically
+    //    grabbing focus on open. A capture-phase focus listener can cancel the
+    //    focus change via preventDefault; a user tap on the input itself is
+    //    allowed (last pointer target is the input).
+    let lastPointerTarget: EventTarget | null = null
+    const onPointerDownCapture = (event: PointerEvent): void => {
+      lastPointerTarget = event.target
+    }
+    const onFocusCapture = (event: FocusEvent): void => {
+      if (!isMobile()) return
+      const target = event.target
+      if (!(target instanceof HTMLElement)) return
+      if (!target.matches('input[class*="_search"]')) return
+      if (lastPointerTarget instanceof Node && (lastPointerTarget === target || target.contains(lastPointerTarget))) return
+      event.preventDefault()
+    }
+
+    document.addEventListener('mousedown', onMouseDownCapture, true)
+    document.addEventListener('pointerdown', onPointerDownCapture, true)
+    document.addEventListener('focus', onFocusCapture, true)
+    return () => {
+      document.removeEventListener('mousedown', onMouseDownCapture, true)
+      document.removeEventListener('pointerdown', onPointerDownCapture, true)
+      document.removeEventListener('focus', onFocusCapture, true)
+    }
+  }, 'ui-mobile: keep command-menu keyboard down on phones')
 }
