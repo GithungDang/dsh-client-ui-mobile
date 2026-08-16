@@ -16,8 +16,10 @@
   place-items: center;
   width: 44px;
   height: 44px;
-  border: 1px solid var(--dsw-alias-border-l2);
-  border-radius: 999px;
+  /* Match the built-in floating-surface style (AppFrame handle): 10px radius,
+     the button-floating fill tokens, and the thin dark-mode border. */
+  border: 1px solid var(--dsw-alias-border-l2-darkmode-thin);
+  border-radius: 10px;
   background: var(--dsw-alias-button-floating-fill);
   color: var(--dsw-alias-label-primary);
   box-shadow: var(--dsw-shadow-lv2);
@@ -244,7 +246,8 @@
   :global(button[class$="_seat"]),
   :global(button[class$="_brand"]),
   :global(button[class$="_searchButton"]),
-  :global(button[class$="_sessionOverflowButton"]) {
+  :global(button[class$="_sessionOverflowButton"]),
+  :global(button[class$="_action"]) {
     position: relative;
     /* Some built-in buttons clip with overflow:hidden, which would also clip
        the expanded ::after hit area. Let the hit-area pseudo extend past the
@@ -263,12 +266,71 @@
   :global(button[class$="_seat"]::after),
   :global(button[class$="_brand"]::after),
   :global(button[class$="_searchButton"]::after),
-  :global(button[class$="_sessionOverflowButton"]::after) {
+  :global(button[class$="_sessionOverflowButton"]::after),
+  :global(button[class$="_action"]::after) {
     content: '';
     display: block;
     position: absolute;
     inset: -8px;
     border-radius: inherit;
     pointer-events: auto;
+  }
+
+  /* ── conversation header: keep the session title clear of the floating nav ──
+     The 44px toggle sits at (12,12) over the header's breadcrumb row. On
+     phones indent the title row and let the breadcrumb truncate instead of
+     wrapping. The tabs row below stays unindented. */
+  :global([data-phase] header [class*="_titleRow"]) {
+    padding-left: 56px !important;
+  }
+
+  :global([data-phase] header [class*="_crumbs"]) {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* ── drawer brand row: keep the dsh logo clear of the floating nav ── */
+  :global(html[data-mobile-nav="open"] [class$="_sidebarCol"] [class*="_logoRow"]) {
+    padding-left: 56px;
+  }
+
+  /* ── composer / bottom area ──
+     The composer card is already widened via --dsh-composer-side-clearance.
+     Here: bottom safe-area padding, and a taller input with a >=16px font so
+     iOS does not zoom the page on focus. */
+  :global([data-composer-seat]) {
+    padding-bottom: max(4px, env(safe-area-inset-bottom));
+  }
+
+  :global([data-composer-seat] textarea) {
+    min-height: 40px !important;
+    font-size: 16px !important;
+  }
+
+  /* ── queue dock (排队面板): a long queue must scroll inside the dock ──
+     instead of growing the input zone beyond the viewport. */
+  :global([data-queue-dock] [class*="_list"]) {
+    max-height: 35vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ── todo panel (任务清单): same containment for long plans ── */
+  :global([data-testid="todo-panel"] [class*="_list"]) {
+    max-height: 30vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ── markdown tables: never overflow the phone viewport horizontally ── */
+  :global([data-chat-flow] table) {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
