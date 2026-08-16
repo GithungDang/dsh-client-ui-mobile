@@ -149,6 +149,11 @@
     max-width: none !important;
   }
 
+  :global([data-conversation-scroll] [class*="_flowItem"]) {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+
   /* Equalize the message-flow margins: the built-in laid the transcript out
      left 12px / right 20px, so text and tool blocks read off-center on a
      phone. Pin explicit symmetric margins on the blocks. */
@@ -501,5 +506,21 @@
     max-width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+  }
+
+
+  :global([data-slot="conversation.session"] [class$="_flow"]) {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+
+  :global([data-slot="conversation.session"] [class$="_scroll"]) {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+
+  :global([data-chat-flow]) {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
   }
 }
