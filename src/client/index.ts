@@ -117,21 +117,31 @@ export function apply(ctx: ClientContext): void {
     return () => mql.removeEventListener('change', onChange)
   }, 'ui-mobile: mobile breakpoint sync')
 
-  // The command menu shows a lone "命令" group title. With a single group the
-  // label is pure noise on a small screen. CSS display:none handles most
-  // cases, but on some devices the label still lingers; remove the node from
-  // the DOM outright so it cannot render anywhere.
+  // 1) Strip the command menu's lone "命令" group title from the DOM.
+  // 2) Drop the "+" button's hover tooltip (also labeled "命令") which floats
+  //    above the button on phone.
   ctx.effect(() => {
-    const remove: () => void = () => {
+    const prune = (): void => {
+      // Group title -> remove outright.
       document.querySelectorAll('[class*="_groupTitle"][data-source="command"]').forEach((el) => {
         el.remove()
       })
+      // Tooltip bubbles labeled 命令 / near the "+" button -> remove.
+      const addBtn = document.querySelector<HTMLElement>('[data-composer-card] button[class*="_add"]')
+      const addRect = addBtn?.getBoundingClientRect()
+      document.querySelectorAll('[role="tooltip"]').forEach((tip) => {
+        const r = tip.getBoundingClientRect()
+        if (r.width === 0 || r.height === 0) return
+        if (addRect && Math.abs(r.left + r.width / 2 - (addRect.left + addRect.width / 2)) < 120 && r.bottom <= addRect.top) {
+          tip.remove()
+        }
+      })
     }
-    const observer = new MutationObserver(remove)
+    const observer = new MutationObserver(prune)
     observer.observe(document.body, { childList: true, subtree: true })
-    remove()
+    prune()
     return () => observer.disconnect()
-  }, 'ui-mobile: strip command menu group title')
+  }, 'ui-mobile: strip command group title + "+" tooltip')
 
   // On phones, the "+" command button pops the virtual keyboard and then
   // traps it: the built-in keepFocus refocuses the composer textarea on

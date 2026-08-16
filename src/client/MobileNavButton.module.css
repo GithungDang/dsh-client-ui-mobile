@@ -543,3 +543,20 @@
     margin-right: 0 !important;
   }
 }
+
+@media (max-width: 768px) {
+  :global([class$="_centerCol"]) {
+    overflow-x: clip !important;
+  }
+
+  :global([data-chat-flow] ol),
+  :global([data-chat-flow] ul) {
+    list-style-position: inside !important;
+    margin-left: 0 !important;
+    padding-left: 1.4em !important;
+  }
+
+  :global([data-chat-flow] li) {
+    overflow-wrap: anywhere !important;
+  }
+}
