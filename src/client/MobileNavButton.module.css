@@ -419,6 +419,23 @@
     height: 12px;
   }
 
+  /* Subagent catalog bubble on phones: the built-in anchor is `left:0` off a
+     centered trigger, so a 336px menu overflows the right edge of a narrow
+     screen. Center it on the trigger instead and cap it to the viewport, and
+     keep the header actions row on one line so mode + subagent don't wrap. */
+  :global([data-slot="conversation.session.header"] > header [class$="_menu"]) {
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: 336px !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+
+  :global([data-slot="conversation.session.header"] > header [class*="_headerActions"]) {
+    flex-wrap: nowrap !important;
+    gap: 4px !important;
+  }
+
   /* The session-log utility is hidden on phones: the drawer toggle takes the
      top-right corner. */
   :global([data-slot="conversation.session.header"] > header [class*="_headerUtilities"]) {
