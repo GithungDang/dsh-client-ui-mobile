@@ -9,6 +9,9 @@
 - 遮罩只覆盖抽屉右侧，抽屉内按钮可正常点击；
 - 设置面板手机端全屏 + 顶部横向导航；
 - 工具调用行手机端可读性优化（更高行高、摘要换行、IN/OUT 堆叠、Inspect 常显）；
+- 问题看板（提问弹窗）长标题手机端不与选项重叠，标题区可滚动、选项始终可见；
+- 消息时间行精简为“时间 · 用时”，长尾不溢出手机宽度；
+- 手机抽屉里点“新建会话”后自动收起抽屉，输入区不被遮挡；
 - 触控热区扩展（主要按钮 ≥44×44 可点区域）；
 - 桌面宽度完全不受影响。
 
@@ -28,7 +31,7 @@
 dsh plugin --profile web add dsh-client-ui-mobile
 
 # 或从 git（需要作者侧 prepare 脚本 + 首次 add 需在 profile 的 pnpm-workspace.yaml 里 allowBuilds）
-dsh plugin --profile web add github:you/dsh-client-ui-mobile#<commit>
+dsh plugin --profile web add github:gihungdang/dsh-client-ui-mobile#<commit>
 
 # 或本地目录 / tarball
 dsh plugin --profile web add ./dsh-client-ui-mobile
