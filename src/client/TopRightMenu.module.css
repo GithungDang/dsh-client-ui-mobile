@@ -62,6 +62,15 @@
   }
 }
 
+/* The + menu is a phone-only affordance: on desktop the built-in session-log
+   button and view tabs are already visible, so the floating toggle would just
+   overlap them. */
+@media (min-width: 769px) {
+  .layer {
+    display: none;
+  }
+}
+
 .item {
   display: block;
   width: 100%;
