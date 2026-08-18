@@ -144,13 +144,21 @@
     padding-right: 16px !important;
   }
 
-  /* The scroll body already gets 10px side padding above, but the inner
+  /* The scroll body already gets 16px side padding above, but the inner
      ChatView .scroll still carries the built-in 32px (clearance+16) padding,
      which stacks to 42px total. Zero it on phones so messages line up with the
      compact 16px margin instead of leaving a huge gutter. */
   :global([data-conversation-scroll] [class$="_scroll"]) {
     padding-left: 0 !important;
     padding-right: 0 !important;
+  }
+
+  /* Align the composer/input card with the 16px message margin: the built-in
+     frame pads clearance+16, so with the default 16px clearance the input card
+     sits ~32px in while messages sit at 16px. Zero the clearance so the input
+     card edge lines up with the text edge. */
+  :global([data-phase] [class$="_root"]) {
+    --dsh-composer-side-clearance: 0px !important;
   }
 
   :global([data-conversation-scroll] [class*="_viewArea"]) {
