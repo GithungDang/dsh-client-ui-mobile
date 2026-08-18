@@ -1,6 +1,6 @@
 {
   "name": "dsh-client-ui-mobile",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Mobile layout enhancement for the dsh web UI: narrow-screen CSS and a floating navigation toggle, reusing the built-in layout slots",
   "type": "module",
   "main": "lib/index.js",

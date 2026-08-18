@@ -143,9 +143,15 @@
     padding-left: 20px !important;
     padding-right: 20px !important;
     /* Phones don't keep a persistent scrollbar, so the reserved stable gutter
-       adds an asymmetrical ~8px on the right. Drop it and let messages/input
-       share the same 16px symmetric margin. */
+       adds an asymmetrical ~8px on the right. Drop it, and on devices that
+       still paint a real (non-overlay) scrollbar, hide it entirely so the
+       right edge truly matches the left. */
     scrollbar-gutter: auto !important;
+    scrollbar-width: none !important;
+  }
+
+  :global([data-conversation-scroll]::-webkit-scrollbar) {
+    display: none !important;
   }
 
   /* The scroll body already gets 20px side padding above, but the inner
