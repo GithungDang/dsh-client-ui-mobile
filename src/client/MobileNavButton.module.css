@@ -184,7 +184,10 @@
   /* Equalize the message-flow margins: the built-in laid the transcript out
      left 12px / right 20px, so text and tool blocks read off-center on a
      phone. Pin explicit symmetric margins on the blocks. */
-  :global([data-chat-flow] > * :is(p, pre, ul, ol, table, [class*="_message"], [class*="_flow"])) {
+  /* Exclude <pre>: code blocks must keep their own internal padding so code
+     isn't flush against the card edge. p/ul/ol/table/message/flow still get
+     the symmetric zeroing. */
+  :global([data-chat-flow] > * :is(p, ul, ol, table, [class*="_message"], [class*="_flow"])) {
     margin-left: 0 !important;
     margin-right: 0 !important;
     padding-left: 0 !important;
@@ -603,6 +606,17 @@
 
   :global([data-chat-flow] li) {
     overflow-wrap: anywhere !important;
+  }
+
+  /* Code blocks: preserve code structure on phones by keeping white-space pre
+     and scrolling horizontally instead of forced wrapping. Keep the code
+     block's own padding intact. */
+  :global([data-chat-flow] pre),
+  :global([data-chat-flow] pre code) {
+    white-space: pre !important;
+    overflow-x: auto !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
   }
 
   /* Per-message time/run row (MessageIconActions .timeEnd/.timeStart): built-in
