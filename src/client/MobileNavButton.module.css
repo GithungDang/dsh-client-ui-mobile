@@ -267,13 +267,19 @@
     max-height: 200px !important;
   }
 
-  /* IN and OUT share the same .ioText (pre-wrap + break-word). Force a
-     permissive line break so a very long unbroken token (a huge path or
-     command) that a pre-wrap wrapper refuses to break still ends up readable
-     on both sides — IN and OUT stay identical. */
+  /* IN and OUT share the same .ioText (built-in pre-wrap + break-word). On
+     phones, terminal-style multi-line output (e.g. `$`-column transcripts)
+     should keep its alignment and scroll horizontally rather than wrapping or
+     truncating with "…"; real TerminalBlock already does the same. */
   :global([class$="_callRow"] [class$="_ioText"]) {
-    overflow-wrap: anywhere !important;
-    word-break: break-word !important;
+    /* Terminal-style IN/OUT output: keep `$`-column alignment and let long
+       multi-line command output scroll horizontally instead of wrapping or
+       truncating with "…". Real TerminalBlock already scrolls; this makes the
+       generic IN/OUT card behave the same on phones. */
+    white-space: pre !important;
+    overflow-x: auto !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
   }
 
   :global([class$="_callRow"] [class$="_ioLabel"]) {
