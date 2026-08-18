@@ -619,6 +619,19 @@
     word-break: normal !important;
   }
 
+  /* Bash/terminal command banner: the built-in .header scrolls vertically and
+     ellipsizes each .command line. On phones let the banner also scroll
+     horizontally so a long multi-line `$` script is readable instead of
+     truncated with "...". */
+  :global([data-chat-flow] [class$="_callRow"] [class$="_header"]) {
+    overflow-x: auto !important;
+  }
+  :global([data-chat-flow] [class$="_callRow"] [class$="_command"]) {
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: pre !important;
+  }
+
   /* Per-message time/run row (MessageIconActions .timeEnd/.timeStart): built-in
      white-space:nowrap lets a long 用时 · 首token · tok/s tail spill past the
      right edge. Constrain the row so it never overflows and ellipsizes the
