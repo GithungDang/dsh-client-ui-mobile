@@ -140,14 +140,14 @@
      text and tool blocks read centered instead of left-justified with an
      extra 8px on the right. */
   :global([data-conversation-scroll]) {
-    padding-left: 10px !important;
-    padding-right: 10px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
   }
 
   /* The scroll body already gets 10px side padding above, but the inner
      ChatView .scroll still carries the built-in 32px (clearance+16) padding,
      which stacks to 42px total. Zero it on phones so messages line up with the
-     compact 10px margin instead of leaving a huge gutter. */
+     compact 16px margin instead of leaving a huge gutter. */
   :global([data-conversation-scroll] [class$="_scroll"]) {
     padding-left: 0 !important;
     padding-right: 0 !important;
